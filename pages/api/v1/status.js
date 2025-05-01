@@ -4,7 +4,12 @@ async function status(request, response) {
   const updatedAt = new Date().toISOString()
   const [version] = await database.query('SHOW server_version;').then(result => result.rows)
   const [maxConnections] = await database.query("SHOW max_connections;").then(result => result.rows)
-  const [connections] = await database.query("SELECT count(*)::int AS connections FROM pg_stat_activity;").then(result => result.rows)
+
+  const dbName = process.env.POSTGRES_DB
+  const [connections] = await database.query({
+    text: "SELECT count(*)::int AS connections FROM pg_stat_activity WHERE datname = $1",
+    values: [dbName]
+  }).then(result => result.rows)
 
   const body = {
     updated_at: updatedAt,
