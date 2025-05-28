@@ -1,7 +1,12 @@
+import database from 'infra/database'
 
 test("GET to /api/v1/status should return 200", async () => {
   const response = await fetch("http://localhost:3000/api/v1/migrations")
-  expect(response.status).toBe(200);
+  const body = await response.json();
 
-  expect(Array.isArray(await response.json())).toBeTruthy();
+  console.log({ body })
+
+  expect(response.status).toBe(200);
+  expect(Array.isArray(body)).toBeTruthy();
+  expect(body.length).toBeGreaterThan(0);
 })
